@@ -54,7 +54,7 @@ def new_board(level_text):
         "targets": set(),  # ゴールの座標集合
         "crates": set(),  # 箱の座標集合
         "hero": None,     # プレイヤーの座標
-        "steps": 0,
+        "steps": 0,# 移動回数
         "past": [],       # 一手戻すための履歴
     }
     for y, row in enumerate(rows):
@@ -147,8 +147,18 @@ def apply_move(board, direction_key):
     if direction_key not in KEY_TO_VECTOR:
         return False
     vector = KEY_TO_VECTOR[direction_key]
-    # TODO 1：現在の座標を取得し、次の座標を計算する。
-    #           盤面内なら hero を更新する（最初は壁や箱を無視してよい）。
+    #現在の座標を取得し、次の座標を計算する
+    create=board["hero"]
+    ikisaki=next_position(create,vector)
+    #TODO 1：盤面内なら hero を更新する（最初は壁や箱を無視してよい）。
+    if not in_field(board, ikisaki):
+        return False
+    
+    board["past"].append((board["hero"], board["crates"].copy()))
+    board["hero"] = ikisaki
+    board["steps"] += 1
+    return True
+    
     # TODO 2：TODO 1の判定に can_enter() を組み込む。
     # TODO 3：次の位置が crates に含まれたら push_crate() を呼ぶ。
     #           箱が動かなければプレイヤーも移動してはいけない。
